@@ -1,0 +1,8 @@
+node_modules/
+tracker.db
+tracker.db-shm
+tracker.db-wal
+DailyDiscipline.apk
+DailyDiscipline.apk.idsig
+android/build/
+android/daily-discipline.keystore

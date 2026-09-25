@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#14181f" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<title>Discipline Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <div>
+        <h1>Discipline Tracker </h1>
+        <p class="brand-sub">a ledger of small, kept promises</p>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="today">Today</button>
+      <button class="tab-btn" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="money">Money</button>
+      <button class="install-button" id="export-button" type="button">Backup</button>
+      <button class="install-button" id="import-button" type="button">Restore</button>
+      <button class="install-button" id="install-button" hidden>Install app</button>
+      <input id="import-file" type="file" accept="application/json,.json" hidden />
+    </nav>
+  </header>
+
+  <!-- ============ TODAY ============ -->
+  <section id="tab-today" class="tab-panel active">
+
+    <div class="today-grid">
+
+      <div class="seal-column">
+        <div class="date-picker-row">
+          <label for="date-input">Viewing</label>
+          <input type="date" id="date-input" />
+        </div>
+
+        <div class="seal" id="seal">
+          <svg viewBox="0 0 200 200" class="seal-ring">
+            <circle class="seal-track" cx="100" cy="100" r="88" />
+            <circle class="seal-progress" id="seal-progress" cx="100" cy="100" r="88" />
+          </svg>
+          <div class="seal-center">
+            <span class="seal-pct" id="seal-pct">0%</span>
+            <span class="seal-pts" id="seal-pts">0 / 0 pts</span>
+          </div>
+        </div>
+
+        <p class="seal-status" id="seal-status">Begin the day.</p>
+      </div>
+
+      <div class="habit-column">
+        <div class="list-heading">
+          <h2 class="section-label">Daily tasks</h2>
+          <span class="list-hint">repeat daily · drag to arrange</span>
+        </div>
+        <ul class="habit-list" id="habit-list"></ul>
+
+        <div class="custom-section">
+          <h2 class="section-label">One-off tasks — <span class="section-label-sub">points your call</span></h2>
+          <div class="list-heading">
+            <h2 class="section-label">Today’s tasks <span class="section-label-sub">points your call</span></h2>
+            <span class="list-hint">drag to arrange</span>
+          </div>
+          <ul class="habit-list" id="custom-list"></ul>
+          <form id="custom-form" class="custom-form">
+            <input type="text" id="custom-name" placeholder="Task name" required />
+            <input type="number" id="custom-points" placeholder="pts" min="1" value="1" required />
+            <select id="custom-type" aria-label="Task type">
+              <option value="today">Today</option>
+              <option value="daily">Repeat daily</option>
+            </select>
+            <label class="reminder-control">
+              <input type="checkbox" id="custom-reminder" />
+              <span>Remind me</span>
+            </label>
+            <input type="time" id="custom-reminder-time" aria-label="Reminder time" disabled />
+            <button type="submit">Add task</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section id="tab-dashboard" class="tab-panel">
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-value" id="stat-streak">0</span>
+        <span class="stat-label">day streak</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-days">0</span>
+        <span class="stat-label">days logged</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-best">0%</span>
+        <span class="stat-label">personal best</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-avg">0%</span>
+        <span class="stat-label">avg. score</span>
+      </div>
+    </div>
+
+    <div class="calendar-tracker">
+      <div class="calendar-summary">
+        <span class="stat-value">%</span>
+        <span class="stat-label">Streak</span>
+        <p class="tracker-note">Green deepens as your score rises<br />Gray means no completed work</p>
+      </div>
+      <div>
+        <div class="calendar-heading">
+          <button class="calendar-nav" id="calendar-prev" type="button" aria-label="Previous month">←</button>
+          <h2 class="section-label" id="calendar-title">Calendar</h2>
+          <button class="calendar-nav" id="calendar-next" type="button" aria-label="Next month">→</button>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ MONEY ============ -->
+  <section id="tab-money" class="tab-panel">
+    <div class="money-intro">
+      <div>
+        <p class="eyebrow">Personal ledger</p>
+        <h2 class="money-title">Money dashboard</h2>
+        <p class="money-subtitle">Track every movement across your accounts.</p>
+      </div>
+      <span class="money-balance-badge" id="money-net-badge">Balance 0</span>
+    </div>
+
+    <form id="money-form" class="money-form">
+      <label>
+        Date
+        <input type="date" id="money-date" required />
+      </label>
+      <label>
+        Category
+        <select id="money-category" required>
+          <option value="eat">Food</option>
+          <option value="payment">Payment</option>
+          <option value="others">Others</option>
+          <option value="loan-given">Loans given</option>
+          <option value="loan-taken">Loans taken</option>
+        </select>
+      </label>
+      <label>
+        Account
+        <select id="money-account" required>
+          <option value="cash">Cash</option>
+          <option value="bkash">bKash</option>
+          <option value="bank">Bank</option>
+        </select>
+      </label>
+      <label>
+        Movement
+        <select id="money-direction" required>
+          <option value="out">Reduce</option>
+          <option value="in">Add</option>
+        </select>
+      </label>
+      <label>
+        Amount
+        <input type="number" id="money-amount" min="0.01" step="0.01" placeholder="0.00" required />
+      </label>
+      <label class="money-note-field">
+        Note <span id="money-note-hint">(optional)</span>
+        <input type="text" id="money-note" maxlength="80" placeholder="What was this for?" />
+      </label>
+      <button class="money-add-button" type="submit">Add transaction</button>
+    </form>
+
+    <div class="money-summary-grid">
+      <div class="money-stat"><span class="money-stat-label">Total spent</span><strong id="money-total-spent">0</strong></div>
+      <div class="money-stat"><span class="money-stat-label">Total added</span><strong id="money-total-added">0</strong></div>
+      <div class="money-stat"><span class="money-stat-label">Net balance</span><strong id="money-total-balance">0</strong></div>
+    </div>
+
+    <div class="money-dashboard-grid">
+      <section class="money-panel">
+        <div class="money-panel-heading"><h3>Account balances</h3><span>automatic</span></div>
+        <div id="money-accounts" class="account-list"></div>
+      </section>
+      <section class="money-panel">
+        <div class="money-panel-heading"><h3>By category</h3><span>reductions</span></div>
+        <div id="money-categories" class="category-list"></div>
+      </section>
+      <section class="money-panel loan-panel">
+        <div class="money-panel-heading"><h3>Loan accounts</h3><span>click a name to filter</span></div>
+        <div id="money-loans" class="loan-list"></div>
+      </section>
+    </div>
+
+    <section class="money-panel money-ledger-panel">
+      <div class="money-panel-heading"><h3>Transactions</h3><span id="money-transaction-count">0 entries</span></div>
+      <div id="money-transactions" class="money-transactions"></div>
+    </section>
+  </section>
+
+</div>
+
+<script src="storage.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
