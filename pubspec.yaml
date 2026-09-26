@@ -1,0 +1,22 @@
+name: discipline_tracker
+description: Android-only daily habit and money tracker.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: 2.3.2
+  file_picker: 8.1.7
+  share_plus: 10.0.2
+  flutter_local_notifications: 17.2.3
+  timezone: ^0.9.4
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
